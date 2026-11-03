@@ -88,3 +88,47 @@ Dati in conflitto (non scegliere):
 - Offerte laurea: "sala privata… acconto 100 €" ↔ "Aperitivo per dieci persone a soli 100 euro…". Stessa cifra, non si sa se siano la stessa offerta: vanno mostrate separate.
 
 Da non usare: stelle e recensioni (Maps 4,5/101; leggimenu 5/14), etichette Maps "Di proprietà di donne" e "LGBTQ+ friendly" (`DATI-CLIENTE.md` §Attributi).
+
+## 6. Contesto e criteri di design
+
+Ricerca web fatta il 03/11/2026. Onestamente: la resa è stata scarsa. Per i bar di quartiere torinesi le ricerche restituiscono quasi solo directory (Virgilio, Wanderlog, Tripaligner) e guide, non siti propri. Questo è già un dato: il concorrente tipico di On the Road non ha un sito, ha una scheda Maps e un menu digitale (lo stesso On the Road usa leggimenu come "sito", `DATI-CLIENTE.md` §Identità).
+
+### Cosa cerca chi arriva (osservato nelle fonti, in quest'ordine)
+1. **È aperto? A che ora?** Le guide di settore insistono sugli orari in alto, soprattutto se cambiano per giorno ([getbento](https://getbento.com/blog/best-bar-website-design), roundup di articoli trovati con la ricerca "bar website UX"). Qui gli orari cambiano per giorno (domenica diversa, venerdì/sabato fino alle 00:30).
+2. **Dov'è?** Indirizzo e pulsante "indicazioni" visibili da telefono, non solo nel footer (stesse fonti, linee guida "mobile optimization" per locali).
+3. **Cosa si beve/mangia e quanto costa?** Il menu prima di uscire, verticale e leggibile da telefono (stesse fonti).
+4. **Come prenoto / contatto?** Nei siti di bar raccolti da getbento le richieste per eventi privati e le prenotazioni sono pulsanti fissi in testata o a piè di pagina.
+
+### Esempi guardati (principi, non copie)
+| Esempio | Fonte | Cosa ne traggo |
+|---|---|---|
+| Dante (NYC) | getbento | Foto dei drink grandi su impaginato minimale; richiesta per eventi privati come azione propria, separata dal resto. |
+| The Bandit (Chicago) | getbento | Pulsanti fissi in basso da telefono: azione sempre a un tocco. |
+| The Spaniard (NYC) | getbento | Una sola barra di avviso in testata per l'informazione più urgente. |
+| The Brakeman (Detroit) | getbento | Menu da scorrere, non PDF. |
+| Death & Co | getbento | Orari dichiarati per sede, chiari. |
+| KM5 (Torino, Quadrilatero) | [Virgilio](https://www.virgilio.it/italia/torino/cat/bar-e-caffe_/internet-caffe.html), [wineandfoodtour](https://www.wineandfoodtour.it/i-luoghi-migliori-dove-consumare-un-aperitivo-a-torino) | Concorrente diretto sulle feste di laurea: le guide riportano la formula aperitivo come "drink + buffet" a prezzo fisso. Chi cerca una festa di laurea confronta prezzo e cosa è incluso. Sito proprio non trovato. |
+| Guide aperitivo Torino (Bar Zucca, Spritzerò, Mulassano) | [ESN Torino](https://torino.esn.it/en/node/395), [spotahome](https://www.spotahome.com/it/blog/aperitivo-a-torino-dove-andare/) | Il richiamo è "spritz + stuzzichini a un prezzo": il prezzo dell'aperitivo è l'informazione che la gente si passa. |
+| Sluurpy "aperitivo laurea Torino" | [sluurpy](https://www.sluurpy.it/torino/aperitivo-laurea) | Prezzi medi stimati 25-40 € a persona (fonte di bassa qualità): un'offerta da 100 € per 10 persone è molto sotto, quindi è il dato più forte del locale, ma è anche quello da confermare per primo. |
+
+Cosa non funziona negli esempi: diversi siti di bar puntano tutto sull'atmosfera (fotografie scure, illustrazioni) e nascondono orari e indirizzo. Senza foto del locale, quella strada per On the Road non è percorribile.
+
+### Fonti pubbliche su questo locale
+- Recensioni Google: argomenti più citati aperitivo (21), cocktail (10), tagliere (7), laurea (3) (`DATI-CLIENTE.md` §Cosa dicono i clienti, contatore di Maps). Testi non letti, stelle non usate.
+- Ricerca web "On the Road Via Monginevro 5": nessun articolo, nessun profilo social verificabile. Una directory ([impresaitalia](https://www.impresaitalia.info/ik00391046/bar-garden/torino.aspx), risultato di ricerca) associa all'indirizzo via Monginevro 5 un altro numero (011 3825192) e una ragione sociale, senza il nome "On the Road". Può essere un dato vecchio o di un'altra gestione: **non lo uso** (regola omonimi) ma va chiesto al locale quale numero è giusto.
+
+### Preferenze dell'utente
+Nessuna.
+
+### Criteri di design
+Osservati (dalle fonti sopra):
+1. **"Aperto adesso" e orari nella prima schermata**, calcolati sul giorno corrente, con il riquadro [DA CONFERMARE] accanto.
+2. **Indirizzo e "Come arrivare" (link Maps) nella prima schermata**, non solo in fondo.
+3. **Menu in HTML a schede per categoria**, leggibile da telefono: la categoria giusta in massimo 2 tocchi dalla prima schermata.
+4. **Azioni fisse in basso da telefono: Chiama e Come arrivare.** Niente "Prenota" né WhatsApp: non esistono nei dati.
+5. **Le feste di laurea hanno una sezione propria**, con le due offerte separate e i dubbi scritti: è il dato più distintivo e quello che un cliente confronta coi concorrenti.
+
+Supposti (non verificati, da far vedere a persone vere):
+6. Il pubblico serale è giovane (feste di laurea, spritz a 5-6 €, chiusura 00:30): ipotesi, non misurata. Il tono visivo può essere colorato come il logo.
+7. La mattina conta quanto la sera (apertura 6:30, 30 voci di caffetteria): la prima schermata deve dire entrambe le cose, non solo "cocktail bar".
+8. Senza foto vere il sito deve reggersi sulla tipografia e sui dati, con i riquadri [FOTO DA INSERIRE] che non sembrino un errore ma un cantiere dichiarato.
