@@ -16,7 +16,7 @@ Il messaggio dice due cose incompatibili con le immagini allegate:
 - "Foto in img-originali/ (per ora nessuna). Solo quelle: niente immagini da Maps o da internet."
 - "Logo non disponibile: non ridisegnarlo, solo il nome in testo."
 
-Eppure in chat ci sono un logo e tre foto. Indizi che vengano dal web (probabilmente dalla scheda Maps): due sono `.webp`, tutte hanno risoluzione bassa (241-681 px di lato), nessuna ha metadati EXIF da fotocamera. Non posso saperlo con certezza. Per questo le ho catalogate ma non le uso nel sito (scelta in DECISIONI.md, D1).
+Eppure in chat ci sono un logo e tre foto. **Aggiornamento 03/11/2026: Alessandro ha confermato che sono sue e vanno usate (DECISIONI D5). Ora sono in `img-originali/`.** Indizi che vengano dal web (probabilmente dalla scheda Maps): due sono `.webp`, tutte hanno risoluzione bassa (241-681 px di lato), nessuna ha metadati EXIF da fotocamera. Non posso saperlo con certezza. Per questo le ho catalogate ma non le uso nel sito (scelta in DECISIONI.md, D1).
 
 | File | Cosa mostra | Qualità | Persone | Sezione adatta (se autorizzata) |
 |---|---|---|---|---|

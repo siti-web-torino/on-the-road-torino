@@ -17,9 +17,8 @@ const DATI = {
   // Menu digitale del locale (è il "sito web" della scheda Maps)
   menuDigitale: "https://www.leggimenu.it/menu/ontheroad-",
 
-  // Logo: null finché non c'è un file con permesso. Poi per esempio
-  // { src: "img/logo.webp", alt: "On the Road" }. Finché è null si vede il nome.
-  logo: null,
+  // Logo del locale (img-originali/logo-neon.png, usato com'è). null = solo il nome in testo.
+  logo: { src: "img/logo.webp", alt: "On the Road, Bar & Cafe" },
 
   // DA CONFERMARE (Maps). 0 = domenica ... 6 = sabato. null = chiuso.
   // Se la chiusura è prima dell'apertura (es. "00:30") vuol dire dopo mezzanotte.
@@ -37,7 +36,7 @@ const DATI = {
   // il locale non risponde; allora lasciare solo quella giusta.
   aperitivo: [
     { fonte: "Google Maps", nome: "Happy hour", giorni: [0, 1, 2, 3, 4, 5, 6], ore: ["16:00", "23:30"] },
-    { fonte: "Menu digitale (leggimenu)", nome: "Formula di aperitivo", giorni: [0, 1, 2, 3, 4, 5, 6], ore: ["17:00", "20:30"] },
+    { fonte: "il menu digitale del locale (leggimenu)", nome: "Formula di aperitivo", giorni: [0, 1, 2, 3, 4, 5, 6], ore: ["17:00", "20:30"] },
   ],
   // DA CONFERMARE (leggimenu). Contenuto e prezzo non noti.
   tagliere: { giorni: [1, 2, 3], ore: ["17:00", "20:30"] },
@@ -56,18 +55,15 @@ const DATI = {
   // DA CONFERMARE (Maps)
   accessibilita: "Ingresso e bagno accessibili in sedia a rotelle (secondo Google Maps).",
 
-  // Foto: null = riquadro [FOTO DA INSERIRE] con la descrizione della foto che serve.
-  // Per metterne una: { src: "img/nome.webp", alt: "descrizione" }.
+  // Foto (originali in img-originali/, versioni ottimizzate in img/).
+  // null = riquadro [FOTO DA INSERIRE] con la descrizione della foto che serve.
   foto: {
-    colazione: null,
-    tagliere: null,
-    cocktail: null,
+    cocktail: { src: "img/cocktail.webp", alt: "Tre drink su un tavolino all'aperto, uno con fragole e menta", w: 565, h: 627 },
+    tagliere: { src: "img/tagliere.webp", alt: "Tagliere con fritti, salame, patatine, cous cous e salse, accanto a due calici di vino bianco", w: 531, h: 567 },
+    buffet: { src: "img/buffet-aperitivo.webp", alt: "Un lungo banco di aperitivo con bruschette, pizzette, tramezzini, patate e bastoncini di carota", w: 673, h: 793 },
     sala: null,
   },
   fotoServe: {
-    colazione: "Il bancone la mattina, con caffè e brioches",
-    tagliere: "Un tagliere dell'aperitivo",
-    cocktail: "Spritz e cocktail sul tavolino",
     sala: "La sala privata, pronta per una festa",
   },
 
@@ -219,7 +215,12 @@ const DATI = {
     if (testo != null) n.textContent = testo;
     return n;
   };
-  const dc = () => el("span", "dc", "[DA CONFERMARE]");
+  const dc = (testo = "da confermare") => el("span", "dc", testo);
+  const link = (testo, href) => {
+    const a = el("a", null, testo);
+    a.href = href; a.target = "_blank"; a.rel = "noopener";
+    return a;
+  };
 
   // "HH:MM" -> minuti dalla mezzanotte
   const minuti = (s) => { const [h, m] = s.split(":").map(Number); return h * 60 + m; };
@@ -234,6 +235,7 @@ const DATI = {
     if (g.length > 1 && g.every((x, i) => i === 0 || x === g[i - 1] + 1)) return `dal ${GIORNI[g[0]]} al ${GIORNI[g[g.length - 1]]}`;
     return g.map((x) => GIORNI[x]).join(", ");
   };
+  const maiuscola = (t) => t.charAt(0).toUpperCase() + t.slice(1);
 
   // Ora di Torino, qualunque sia il fuso di chi guarda
   function adessoATorino() {
@@ -245,7 +247,7 @@ const DATI = {
     return { giorno, min: Number(p.hour) * 60 + Number(p.minute) };
   }
 
-  // Campi di testo semplici
+  // Campi di testo semplici, link e logo
   function riempiCampi() {
     $$('[data-campo="nome"]').forEach((n) => { n.textContent = DATI.nome; });
     $$('[data-campo="indirizzo"]').forEach((n) => { n.textContent = DATI.indirizzo; });
@@ -257,15 +259,14 @@ const DATI = {
     });
     $$('[data-azione="mappa"]').forEach((a) => {
       a.href = DATI.mappa;
-      a.setAttribute("aria-label", "Come arrivare: apre Google Maps");
+      a.setAttribute("aria-label", `${a.textContent.trim()}: apre Google Maps`);
     });
-    if (DATI.logo) {
-      const m = $(".marchio");
-      m.textContent = "";
-      const img = el("img");
-      img.src = DATI.logo.src; img.alt = DATI.logo.alt; img.height = 40;
-      m.append(img);
-    }
+    $$("[data-logo]").forEach((img) => {
+      if (DATI.logo) { img.src = DATI.logo.src; return; }
+      // Senza logo: nel titolo resta il nome in testo, altrove l'immagine sparisce
+      if (img.closest("h1")) img.replaceWith(document.createTextNode(DATI.nome));
+      else img.remove();
+    });
   }
 
   // Stato "aperto adesso" e prossima apertura
@@ -278,125 +279,100 @@ const DATI = {
     // Ancora aperti dalla sera prima (dopo mezzanotte)?
     if (prec) {
       const [, c] = intervallo(prec);
-      if (c > 1440 && min < c - 1440) return { aperto: true, testo: `Aperto adesso · chiude alle ${prec[1]}` };
+      if (c > 1440 && min < c - 1440) return { aperto: true, testo: `Aperto adesso · fino alle ${prec[1]}` };
     }
     if (oggi) {
       const [a, c] = intervallo(oggi);
-      if (min >= a && min < c) return { aperto: true, testo: `Aperto adesso · chiude alle ${oggi[1]}` };
-      if (min < a) return { aperto: false, testo: `Chiuso adesso · apre alle ${oggi[0]}` };
+      if (min >= a && min < c) return { aperto: true, testo: `Aperto adesso · fino alle ${oggi[1]}` };
+      if (min < a) return { aperto: false, testo: `Chiuso · apre alle ${oggi[0]}` };
     }
     for (let i = 1; i <= 7; i++) {
       const g = (giorno + i) % 7;
       if (DATI.orari[g]) {
         const quando = i === 1 ? "domani" : GIORNI[g];
-        return { aperto: false, testo: `Chiuso adesso · apre ${quando} alle ${DATI.orari[g][0]}` };
+        return { aperto: false, testo: `Chiuso · apre ${quando} alle ${DATI.orari[g][0]}` };
       }
     }
     return { aperto: false, testo: "Orari non disponibili" };
   }
 
-  // Striscia della giornata: dalle 6:00 all'1:00
-  function giornata(giorno, min) {
-    const INIZIO = 6 * 60, FINE = 25 * 60, TOT = FINE - INIZIO;
-    const pos = (m) => `${Math.max(0, Math.min(100, ((m - INIZIO) / TOT) * 100))}%`;
-    const larg = ([a, c]) => `${Math.max(0, ((Math.min(c, FINE) - Math.max(a, INIZIO)) / TOT) * 100)}%`;
-    const box = $('[data-campo="giornata"]');
-    box.textContent = "";
-
-    const righe = [];
-    if (DATI.orari[giorno]) righe.push({ etichetta: "Aperto", int: intervallo(DATI.orari[giorno]), cls: "aperto" });
-    DATI.aperitivo.forEach((f) => {
-      if (f.giorni.includes(giorno)) righe.push({ etichetta: `${f.nome} · ${f.fonte.replace("Menu digitale (leggimenu)", "leggimenu")}`, int: intervallo(f.ore), cls: "dubbio" });
-    });
-    if (DATI.tagliere.giorni.includes(giorno)) righe.push({ etichetta: "Tagliere + drink · leggimenu", int: intervallo(DATI.tagliere.ore), cls: "tagliere" });
-
-    righe.forEach((r) => {
-      const riga = el("div", "giornata__riga");
-      riga.append(el("span", "giornata__etichetta", r.etichetta));
-      const pista = el("div", "giornata__pista");
-      const barra = el("span", `giornata__barra giornata__barra--${r.cls}`);
-      barra.style.left = pos(r.int[0]);
-      barra.style.width = larg(r.int);
-      pista.append(barra);
-      riga.append(pista);
-      box.append(riga);
-    });
-
-    const scala = el("div", "giornata__scala");
-    [6, 9, 12, 15, 18, 21, 24].forEach((h) => {
-      const t = el("span", null, h === 24 ? "0" : String(h));
-      t.style.left = pos(h * 60);
-      scala.append(t);
-    });
-    box.append(scala);
-
-    // Segno "adesso" (dopo mezzanotte conta come 24:xx)
-    const m = min < INIZIO ? min + 1440 : min;
-    if (m >= INIZIO && m <= FINE) {
-      const ora = el("span", "giornata__adesso");
-      ora.style.left = pos(m);
-      ora.append(el("span", null, "adesso"));
-      box.append(ora);
-    }
+  function aggiornaStato() {
+    const s = stato();
+    $('[data-campo="stato-testo"]').textContent = s.testo;
+    $('[data-campo="stato"]').classList.toggle("stato--aperto", s.aperto);
   }
 
-  function prima() {
-    const { giorno, min } = adessoATorino();
-    $('[data-campo="oggi-giorno"]').textContent = GIORNI[giorno];
-    const o = DATI.orari[giorno];
-    $('[data-campo="oggi-ore"]').textContent = o ? `${o[0]} – ${o[1]}` : "Chiuso";
-    const s = stato();
-    const st = $('[data-campo="stato"]');
-    st.textContent = s.testo;
-    st.classList.toggle("stato--aperto", s.aperto);
-    giornata(giorno, min);
+  function aperitivo() {
+    const ul = $('[data-campo="aperitivo-fasce"]');
+    DATI.aperitivo.forEach((f) => {
+      const li = el("li");
+      li.append(el("span", "quando__ore", `${f.ore[0]}–${f.ore[1]}`));
+      li.append(el("span", "quando__fonte", `${f.nome}, ${giorniTesto(f.giorni)} · secondo ${f.fonte}`));
+      ul.append(li);
+    });
+    const t = DATI.tagliere;
+    $('[data-campo="tagliere"]').textContent = `${maiuscola(giorniTesto(t.giorni))} · ${t.ore[0]}–${t.ore[1]}`;
+  }
+
+  // Un listino (lista di voci) per un gruppo del menu
+  function listino(g) {
+    const frammento = document.createDocumentFragment();
+    if (g.titolo) frammento.append(el("h3", "listino__gruppo", g.titolo));
+    if (g.conAperitivo) {
+      const n = el("p", "listino__nota");
+      n.append("Ogni voce anche con aperitivo:", el("strong", null, `${g.conAperitivo} €`), dc());
+      frammento.append(n);
+    }
+    const ul = el("ul", "listino");
+    g.voci.forEach(([nome, prezzo, nota]) => {
+      const li = el("li", "listino__voce");
+      li.append(el("span", "listino__nome", nome), el("span", "listino__prezzo", prezzo));
+      if (nota) li.append(el("span", "listino__desc", nota));
+      ul.append(li);
+    });
+    frammento.append(ul);
+    return frammento;
   }
 
   function colazione() {
-    const voce = (nome) => DATI.menu[0].gruppi[0].voci.find((v) => v[0] === nome);
+    const caff = DATI.menu.find((c) => c.id === "caffetteria");
+    const voce = (nome) => caff.gruppi[0].voci.find((v) => v[0] === nome);
     const ul = $('[data-campo="colazione-prezzi"]');
     [["Caffè", "Caffè"], ["Cappuccino", "Cappuccino"], ["Brioches alla Crema", "Brioche"]].forEach(([nome, et]) => {
       const v = voce(nome);
       if (!v) return;
       const li = el("li");
-      li.append(el("span", null, et), el("span", "mono", `${v[1]} €`));
+      const prezzo = el("span", "banco__prezzo", v[1]);
+      prezzo.append(el("small", null, "€"));
+      li.append(el("span", "banco__nome", et), prezzo);
       ul.append(li);
     });
     // Apertura del mattino dai dati orari
     const feriali = [1, 2, 3, 4, 5, 6].map((g) => DATI.orari[g] && DATI.orari[g][0]);
     const p = $('[data-campo="colazione-apertura"]');
     if (feriali.every((x) => x && x === feriali[0]) && DATI.orari[0]) {
-      p.textContent = `Dal lunedì al sabato apre alle ${feriali[0]}, la domenica alle ${DATI.orari[0][0]}. `;
+      p.textContent = `Dal lunedì al sabato si apre alle ${feriali[0]}, la domenica alle ${DATI.orari[0][0]}. `;
       p.append(dc());
     }
+    const box = $('[data-campo="caffetteria"]');
+    caff.gruppi.forEach((g) => box.append(listino(g)));
   }
 
-  function aperitivo() {
-    const dl = $('[data-campo="aperitivo-fasce"]');
-    DATI.aperitivo.forEach((f) => {
-      const d = el("div");
-      d.append(el("dt", null, f.fonte));
-      const dd = el("dd", null, `${f.nome}: `);
-      dd.append(el("span", "ora", `${f.ore[0]}–${f.ore[1]}`), `, ${giorniTesto(f.giorni)}`);
-      d.append(dd);
-      dl.append(d);
-    });
-    const t = DATI.tagliere;
-    $('[data-campo="tagliere"]').textContent = `${giorniTesto(t.giorni).replace(/^./, (c) => c.toUpperCase())}, ${t.ore[0]}–${t.ore[1]}.`;
-  }
-
-  // Menu a schede (senza JS il menu rimanda al menu digitale)
-  function menu() {
-    const box = $('[data-campo="menu"]');
+  // Drink a schede (senza JS il menu rimanda al menu digitale)
+  function drink() {
+    const categorie = DATI.menu.filter((c) => c.id !== "caffetteria");
+    const box = $('[data-campo="drink"]');
     box.textContent = "";
     const lista = el("div", "schede__lista");
     lista.setAttribute("role", "tablist");
-    lista.setAttribute("aria-label", "Categorie del menu");
+    lista.setAttribute("aria-label", "Categorie dei drink");
     box.append(lista);
 
     const bottoni = [];
-    DATI.menu.forEach((cat, i) => {
+    categorie.forEach((cat) => {
       const b = el("button", "schede__bottone", cat.titolo);
+      const quante = cat.gruppi.reduce((n, g) => n + g.voci.length, 0);
+      b.append(el("small", null, String(quante)));
       b.type = "button";
       b.id = `scheda-${cat.id}`;
       b.setAttribute("role", "tab");
@@ -410,33 +386,12 @@ const DATI = {
       pan.setAttribute("role", "tabpanel");
       pan.setAttribute("aria-labelledby", b.id);
       pan.tabIndex = 0;
-
-      cat.gruppi.forEach((g) => {
-        if (g.titolo) pan.append(el("h3", "listino__gruppo", g.titolo));
-        if (g.conAperitivo) {
-          const n = el("p", "listino__nota", `Ogni voce anche "con aperitivo": ${g.conAperitivo} €. `);
-          n.append(dc());
-          pan.append(n);
-        }
-        const ul = el("ul", "listino");
-        g.voci.forEach(([nome, prezzo, nota]) => {
-          const li = el("li", "listino__voce");
-          li.append(el("span", "listino__nome", nome));
-          li.append(el("span", "listino__punti"));
-          li.append(el("span", "listino__prezzo mono", prezzo));
-          if (nota) li.append(el("span", "listino__desc", nota));
-          ul.append(li);
-        });
-        pan.append(ul);
-      });
+      cat.gruppi.forEach((g) => pan.append(listino(g)));
       box.append(pan);
     });
 
     const fonte = el("p", "listino__fonte");
-    fonte.append("Fonte: ");
-    const a = el("a", null, "menu digitale del locale su leggimenu.it");
-    a.href = DATI.menuDigitale; a.target = "_blank"; a.rel = "noopener";
-    fonte.append(a);
+    fonte.append("Fonte: ", link("menu digitale del locale su leggimenu.it", DATI.menuDigitale), ". Questo sito non dà indicazioni sugli allergeni: chiedi al personale.");
     box.append(fonte);
 
     function apri(id, fuoco) {
@@ -462,11 +417,7 @@ const DATI = {
       if (e.key === "End") j = bottoni.length - 1;
       if (j !== null) { e.preventDefault(); apri(bottoni[j].dataset.scheda, true); }
     });
-    // Collegamenti "vedi nel menu" da altre sezioni
-    $$("[data-apri-scheda]").forEach((l) => {
-      l.addEventListener("click", () => apri(l.dataset.apriScheda));
-    });
-    apri(DATI.menu[0].id);
+    apri(categorie[0].id);
   }
 
   function lauree() {
@@ -484,21 +435,18 @@ const DATI = {
       const th = el("th", null, GIORNI[g]);
       th.scope = "row";
       const o = DATI.orari[g];
-      tr.append(th, el("td", "mono", o ? `${o[0]} – ${o[1]}` : "chiuso"));
+      tr.append(th, el("td", null, o ? `${o[0]} – ${o[1]}` : "chiuso"));
       tb.append(tr);
     });
 
     const info = $('[data-campo="info"]');
-    const li1 = el("li");
-    li1.append(`${DATI.accessibilita} `, dc());
-    const li2 = el("li");
-    li2.append("Menu digitale del locale: ");
-    const a = el("a", null, "leggimenu.it");
-    a.href = DATI.menuDigitale; a.target = "_blank"; a.rel = "noopener";
-    li2.append(a);
-    const li3 = el("li");
-    li3.append(`Telefono ${DATI.telefono.testo} `, dc());
-    info.append(li3, li1, li2);
+    const tel = el("li");
+    tel.append(`Telefono ${DATI.telefono.testo} `, dc());
+    const acc = el("li");
+    acc.append(`${DATI.accessibilita} `, dc());
+    const menu = el("li");
+    menu.append("Menu digitale del locale: ", link("leggimenu.it", DATI.menuDigitale));
+    info.append(tel, acc, menu);
   }
 
   function foto() {
@@ -507,27 +455,29 @@ const DATI = {
       const f = DATI.foto[k];
       box.textContent = "";
       if (f) {
-        box.className = "foto";
+        box.classList.add("foto");
         const img = el("img");
-        img.src = f.src; img.alt = f.alt; img.loading = "lazy"; img.decoding = "async";
+        img.src = f.src; img.alt = f.alt; img.decoding = "async";
+        if (f.w) { img.width = f.w; img.height = f.h; }
+        if (!box.closest(".hero")) img.loading = "lazy";
         box.append(img);
       } else {
-        box.className = "foto foto--manca";
+        box.classList.add("foto", "foto--manca");
         box.setAttribute("role", "img");
-        box.setAttribute("aria-label", `Foto da inserire: ${DATI.fotoServe[k]}`);
-        box.append(el("span", "foto__etichetta", "[FOTO DA INSERIRE]"), el("span", "foto__desc", DATI.fotoServe[k]));
+        box.setAttribute("aria-label", `Foto da inserire: ${DATI.fotoServe[k] || ""}`);
+        box.append(el("span", "foto__etichetta", "[FOTO DA INSERIRE]"), el("span", "foto__desc", DATI.fotoServe[k] || ""));
       }
     });
   }
 
   riempiCampi();
-  prima();
-  colazione();
+  foto();
+  aggiornaStato();
   aperitivo();
-  menu();
+  drink();
+  colazione();
   lauree();
   dove();
-  foto();
-  // Aggiorna "aperto adesso" e il segno sulla striscia ogni minuto
-  setInterval(prima, 60 * 1000);
+  // Aggiorna "aperto adesso" ogni minuto
+  setInterval(aggiornaStato, 60 * 1000);
 })();

@@ -2,7 +2,7 @@
 
 Ogni scelta con il suo motivo. Riferimenti: `STUDIO.md` (§ numerati), `docs/fonti/`.
 
-## D1. Le 4 immagini incollate in chat non vanno nel sito
+## D1. Le 4 immagini incollate in chat (superata: vedi D5)
 **Scelta:** salvate in `img-da-verificare/` (esclusa da git), catalogate in STUDIO.md §1, non usate. Nel sito: riquadri "[FOTO DA INSERIRE]" e nome in testo al posto del logo.
 **Motivo:** il messaggio dice "Foto in img-originali/ (per ora nessuna). Solo quelle: niente immagini da Maps o da internet" e "Logo non disponibile". Le immagini allegate contraddicono il testo e hanno l'aspetto di file scaricati dal web (webp, 241-681 px, nessun EXIF). Se vengono da Maps, usarle viola la regola sulle foto; se invece sono di Alessandro, basta spostarle in `img-originali/` e cambiare una riga in `js/main.js` (vedi README). Sbagliare per prudenza costa cinque minuti; sbagliare nell'altro senso mette nel sito foto di terzi.
 **Uso consentito che ne faccio:** campionare i colori del logo (STUDIO §2). I colori di un marchio sono un fatto sull'identità del locale, non una riproduzione del logo. Il nome non viene disegnato come insegna al neon né chiuso in un cerchio: sarebbe ridisegnare il logo.
@@ -59,3 +59,19 @@ B è l'unica che tiene insieme le due metà vere del locale, il bar delle 6:30 e
 - **Stelle e recensioni:** escluse.
 - **Azioni:** Chiama (`tel:`) e Come arrivare (link Maps dei dati). Niente prenotazione online: non esiste. Per le lauree: "passa al bancone o chiama", che è quanto dice la fonte ("dal menu digitale o passando in locale"); il link al menu digitale leggimenu c'è, come fonte del locale.
 - **"Aperto adesso":** calcolato in JS dagli orari Maps, sempre accompagnato da "[DA CONFERMARE]". Orari dopo mezzanotte gestiti (venerdì 06:30-00:30 vale anche per sabato alle 00:15).
+
+## D5. Foto e logo ora nel sito (03/11/2026, seconda richiesta)
+Alessandro ha confermato: "ti ho mandato le foto. Usa quelle" e "metti anche il logo". Le 4 immagini sono in `img-originali/` (`logo-neon.png`, `tagliere.webp`, `buffet-aperitivo.webp`, `cocktail.png`), le versioni per il sito in `img/` (WebP, senza metadati, nessun ingrandimento: sono già piccole).
+- **Ritagli per le persone:** tagliere tagliato a sinistra e in alto (braccio e busto di una persona); cocktail tagliato a sinistra (indumento rosso) e a destra (un braccio). Nessun volto era visibile neanche prima.
+- **Logo usato com'è:** lo stesso file, mostrato dentro un tondo (`border-radius: 50%`) perché l'immagine ha un fondo scuro quadrato attorno all'insegna tonda. Nessun ridisegno, nessun colore cambiato. Testata 40 px, prima schermata fino a 220 px (l'originale è 241 px: più grande sarebbe sgranato), piè di pagina, favicon.
+- **Didascalie:** nessuna. I testi alternativi descrivono cosa si vede, non dicono "questo è il nostro aperitivo" né danno nomi ai drink (non corrispondono a voci del menu).
+- **Sala privata:** nessuna foto, resta un riquadro [FOTO DA INSERIRE].
+
+## D6. Nuova direzione: "Insegna accesa" (sostituisce B)
+Alessandro: la striscia della giornata non funziona e il sito sembra anonimo. Ha ragione: senza foto la direzione B si reggeva su un grafico denso e sul testo; con le foto e il logo il materiale per un'identità vera c'è.
+- **Concetto:** il sito è l'insegna accesa del locale. Fondo quasi nero e prugna (dal fondo del logo), rosa neon e ciano (campionati dal logo) per azioni, prezzi e titoli; foto vere al centro.
+- **Cosa resta di B:** la colazione ha una sezione chiara sua, unica in pagina: la mattina esiste ancora, ma non comanda.
+- **Striscia della giornata eliminata.** Al suo posto, in prima schermata, una riga sola: "Aperto adesso · fino alle 00:00 [da confermare]", che porta agli orari. Le due fasce aperitivo stanno nella sezione Aperitivo, una sotto l'altra, con la fonte scritta.
+- **Ordine:** prima schermata (logo, cosa offre, stato, Come arrivare, Chiama, collage cocktail + tagliere) → Aperitivo (prezzo 8 € in grande, orari in conflitto, tagliere + drink, foto del buffet) → Drink a schede (Spritz, Cocktails, Bevande / Birre con il numero di voci) → Colazione (prezzi grandi al banco, caffetteria intera in una tendina) → Feste di laurea (due "biglietti" separati) → Orari e indirizzo. L'aperitivo va per primo perché è l'argomento più citato nelle recensioni (21, `DATI-CLIENTE.md`) e le foto sono tutte serali.
+- **Dettaglio memorabile:** l'"8 €" dell'aperitivo in rosa con un alone da insegna.
+- **Rischio:** il nero con il rosa può far sembrare il bar più notturno di quanto sia. Va fatto vedere a chi lo frequenta la mattina.
