@@ -2,7 +2,12 @@
 
 One-page per On the Road, bar e caffetteria in Via Monginevro 5, Torino. **Demo non ufficiale**: il locale non è stato contattato, nessun dato è confermato.
 
-HTML, CSS e JavaScript puri, nessuna build. Per vederlo:
+## Dove sta
+- Repository: https://github.com/siti-web-torino/on-the-road-torino (pubblica, creata da `template-vetrina`)
+- Sito: https://on-the-road-torino.vercel.app/ (progetto Vercel `on-the-road-torino`, team Coste). Ogni push su `main` fa un nuovo deploy di produzione.
+- Il link si apre senza login, ma il sito resta fuori dai motori di ricerca (`noindex` e `robots.txt`).
+
+HTML, CSS e JavaScript puri, nessuna build. Per vederlo in locale:
 
 ```bash
 python -m http.server 8765
