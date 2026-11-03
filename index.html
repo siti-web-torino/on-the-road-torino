@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Demo: fuori dai motori di ricerca finché il locale non approva -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>On the Road · Bar e caffetteria, Via Monginevro 5, Torino</title>
+  <meta name="description" content="Bar e caffetteria in Via Monginevro 5 a Torino: colazione, aperitivo, spritz e cocktail, feste di laurea. Sito dimostrativo, dati da confermare.">
+  <meta name="theme-color" content="#f6f1ea">
+  <link rel="icon" href="data:,">
+  <link rel="preload" href="fonts/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="salta" href="#contenuto">Vai al contenuto</a>
+
+  <p class="avviso">Sito dimostrativo non ufficiale. I dati vengono da fonti pubbliche e sono <span class="dc">da confermare</span> con il locale.</p>
+
+  <header class="testata">
+    <div class="testata__riga">
+      <a class="marchio" href="#inizio" data-campo="nome">On the Road</a>
+      <a class="testata__chiama" data-azione="chiama" href="#dove">Chiama</a>
+    </div>
+    <nav class="naviga" aria-label="Sezioni">
+      <a href="#colazione">Colazione</a>
+      <a href="#aperitivo">Aperitivo</a>
+      <a href="#menu">Menu</a>
+      <a href="#lauree">Lauree</a>
+      <a href="#dove">Orari e indirizzo</a>
+    </nav>
+  </header>
+
+  <main id="contenuto">
+
+    <!-- ===== Prima schermata: mattina ===== -->
+    <section class="sezione mattina apertura" id="inizio" aria-labelledby="titolo">
+      <div class="contenitore apertura__griglia">
+        <div class="apertura__testo">
+          <p class="occhiello">Bar e caffetteria · Torino</p>
+          <h1 id="titolo" data-campo="nome">On the Road</h1>
+          <p class="apertura__dove"><span data-campo="indirizzo">Via Monginevro 5, 10138 Torino</span></p>
+          <p class="apertura__cosa">Colazione al banco, spritz e cocktail all'aperitivo, una sala privata per le feste di laurea.</p>
+          <div class="azioni">
+            <a class="bottone bottone--pieno" data-azione="mappa" href="#dove" target="_blank" rel="noopener">Come arrivare</a>
+            <a class="bottone" data-azione="chiama" href="#dove">Chiama <span data-campo="telefono"></span></a>
+          </div>
+        </div>
+
+        <aside class="scontrino" aria-labelledby="oggi-titolo">
+          <h2 class="scontrino__titolo" id="oggi-titolo">Oggi, <span data-campo="oggi-giorno"></span></h2>
+          <p class="scontrino__ore" data-campo="oggi-ore"></p>
+          <p class="stato" data-campo="stato" role="status"></p>
+          <div class="giornata" data-campo="giornata" aria-hidden="true"></div>
+          <p class="scontrino__nota"><span class="dc">[DA CONFERMARE]</span> Orari da Google Maps. Le due fasce dell'aperitivo vengono da fonti diverse e non coincidono.</p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ===== Colazione ===== -->
+    <section class="sezione mattina" id="colazione" aria-labelledby="colazione-titolo">
+      <div class="contenitore due-colonne">
+        <div>
+          <p class="occhiello">Mattina</p>
+          <h2 id="colazione-titolo">Colazione al banco</h2>
+          <ul class="prezzi-chiave" data-campo="colazione-prezzi"></ul>
+          <p data-campo="colazione-apertura"></p>
+          <p>Brioches alla Nutella, alla marmellata d'albicocca, al pistacchio, alla crema e al cioccolato; fagottino ai tre cioccolati e al cioccolato vegano; triangolini; treccia di noci. Cappuccino e latte anche di soia, orzo e ginseng piccoli o grandi.</p>
+          <a class="collegamento" href="#menu" data-apri-scheda="caffetteria">Tutta la caffetteria e i prezzi al tavolo</a>
+        </div>
+        <div data-foto="colazione"></div>
+      </div>
+    </section>
+
+    <!-- ===== Aperitivo ===== -->
+    <section class="sezione pomeriggio" id="aperitivo" aria-labelledby="aperitivo-titolo">
+      <div class="contenitore">
+        <p class="occhiello">Pomeriggio e sera</p>
+        <h2 id="aperitivo-titolo">Aperitivo</h2>
+
+        <div class="conflitto">
+          <p class="conflitto__titolo"><span class="dc">[DA CONFERMARE]</span> A che ora? Le due fonti dicono cose diverse.</p>
+          <dl class="conflitto__fonti" data-campo="aperitivo-fasce"></dl>
+        </div>
+
+        <div class="due-colonne due-colonne--alto">
+          <div>
+            <h3>Con aperitivo: <span class="mono">8,00&nbsp;€</span></h3>
+            <p>Nel menu ogni spritz, cocktail, bibita e birra ha anche il prezzo "con aperitivo", 8,00&nbsp;€.</p>
+            <p><span class="dc">[DA CONFERMARE]</span> Cosa comprende l'aperitivo.</p>
+
+            <h3>Tagliere + drink</h3>
+            <p data-campo="tagliere"></p>
+            <p><span class="dc">[DA CONFERMARE]</span> Cosa c'è nel tagliere e quanto costa.</p>
+
+            <a class="collegamento" href="#menu" data-apri-scheda="spritz">Gli spritz e i cocktail</a>
+          </div>
+          <div class="foto-coppia">
+            <div data-foto="tagliere"></div>
+            <div data-foto="cocktail"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Menu ===== -->
+    <section class="sezione notte" id="menu" aria-labelledby="menu-titolo">
+      <div class="contenitore">
+        <p class="occhiello">Il listino</p>
+        <h2 id="menu-titolo">Menu</h2>
+        <p class="menu__intro">Prezzi in euro, come scritti nel menu digitale del locale il 3 novembre 2026.</p>
+        <p class="menu__avviso"><span class="dc">[DA CONFERMARE]</span> Nomi e prezzi vanno confermati dal locale. Questo sito non dà indicazioni sugli allergeni: chiedi al personale.</p>
+
+        <div class="schede" data-campo="menu">
+          <noscript><p>Il menu completo è sul <a href="https://www.leggimenu.it/menu/ontheroad-">menu digitale del locale</a>.</p></noscript>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Feste di laurea ===== -->
+    <section class="sezione notte notte--fonda" id="lauree" aria-labelledby="lauree-titolo">
+      <div class="contenitore">
+        <p class="occhiello">Eventi</p>
+        <h2 id="lauree-titolo">Feste di laurea</h2>
+        <p class="lauree__intro">Aperitivo di laurea con apericena a buffet o al tavolo, in una sala privata. <span class="dc">[DA CONFERMARE]</span></p>
+
+        <div class="lauree__griglia">
+          <article class="offerta">
+            <h3>Sala privata</h3>
+            <ul class="elenco" data-campo="sala"></ul>
+          </article>
+
+          <article class="offerta">
+            <h3>Aperitivo per dieci persone</h3>
+            <blockquote class="citazione">
+              <p data-campo="dieci-persone"></p>
+              <footer>dal menu digitale del locale</footer>
+            </blockquote>
+          </article>
+
+          <div data-foto="sala"></div>
+        </div>
+
+        <p class="conflitto conflitto--scuro"><span class="dc">[DA CONFERMARE]</span> Non è chiaro se i 100&nbsp;€ per dieci persone e l'acconto da 100&nbsp;€ siano la stessa offerta. Capienza della sala: non nota.</p>
+
+        <div class="azioni">
+          <a class="bottone bottone--pieno" data-azione="chiama" href="#dove">Chiama per la sala</a>
+          <p class="azioni__nota">Oppure chiedi al bancone.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Dove e quando ===== -->
+    <section class="sezione notte" id="dove" aria-labelledby="dove-titolo">
+      <div class="contenitore due-colonne due-colonne--alto">
+        <div>
+          <p class="occhiello">Dove e quando</p>
+          <h2 id="dove-titolo">Orari e indirizzo</h2>
+          <address class="indirizzo">
+            <span data-campo="nome">On the Road</span><br>
+            <span data-campo="indirizzo">Via Monginevro 5, 10138 Torino</span>
+          </address>
+          <div class="azioni">
+            <a class="bottone bottone--pieno" data-azione="mappa" href="#dove" target="_blank" rel="noopener">Come arrivare</a>
+            <a class="bottone" data-azione="chiama" href="#dove">Chiama <span data-campo="telefono"></span></a>
+          </div>
+          <ul class="elenco elenco--info" data-campo="info"></ul>
+        </div>
+        <div>
+          <h3>Orari <span class="dc">[DA CONFERMARE]</span></h3>
+          <table class="orari">
+            <caption>Orari di apertura secondo Google Maps</caption>
+            <tbody data-campo="orari"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="piede">
+    <div class="contenitore">
+      <p><span data-campo="nome">On the Road</span> · <span data-campo="indirizzo">Via Monginevro 5, 10138 Torino</span></p>
+      <p>Sito dimostrativo non ufficiale, preparato senza incarico del locale. Dati da Google Maps e dal menu digitale su leggimenu.it, raccolti il 3 novembre 2026: tutti da confermare.</p>
+    </div>
+  </footer>
+
+  <nav class="barra-fissa" aria-label="Azioni rapide">
+    <a data-azione="chiama" href="#dove">Chiama</a>
+    <a data-azione="mappa" href="#dove" target="_blank" rel="noopener">Come arrivare</a>
+  </nav>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
