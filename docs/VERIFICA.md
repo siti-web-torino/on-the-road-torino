@@ -42,3 +42,12 @@ Nessuna frase inventata attribuita al locale; l'unica citazione è quella dei "d
 
 ## Identità
 Ora sembra il locale: insegna vera, colori presi dall'insegna, foto del suo cibo e dei suoi drink. Il punto debole è l'interno: nessuno sa ancora com'è fatto il bar dentro.
+
+## SEO e GEO (04/11/2026, sul sito pubblicato, commit a70f9d5)
+Lighthouse 12, simulazione telefono: prestazioni 97, accessibilità 100, buone pratiche 100, SEO 69. LCP 2,5 s, CLS 0,001, TBT 0 ms.
+- Il 69 dipende da un solo controllo fallito, `is-crawlable`: è il `noindex` voluto. Gli altri controlli SEO passano.
+- HTML ricevuto senza eseguire JavaScript: 27 controlli su 27 passati (menu, orari, telefono, link Maps e `tel:`, JSON-LD `BarOrPub` con 7 giorni e 90 voci, un solo `h1`, canonical, Open Graph, nessuna stella).
+- Con JavaScript disattivato il sito resta usabile: categorie dei drink una sotto l'altra. Se `index.html` è vecchio rispetto a `DATI`, il browser rifà i blocchi (provato).
+- `RAPPORTO.md`, `CLAUDE.md`, `docs/` e `img-originali/` danno 404 sul sito.
+
+Non provato: Rich Results Test e indicizzazione reale (bloccati da `robots.txt` finché il sito è chiuso), comparsa nelle risposte delle IA. L'efficacia della GEO non si può misurare prima dell'apertura.
