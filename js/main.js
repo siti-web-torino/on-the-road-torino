@@ -7,6 +7,20 @@
 const DATI = {
   nome: "On the Road",
   indirizzo: "Via Monginevro 5, 10138 Torino",
+  indirizzoDettaglio: { via: "Via Monginevro 5", cap: "10138", citta: "Torino", provincia: "TO", paese: "IT" },
+  coordinate: { lat: 45.0652934, lng: 7.6535334 }, // Google Maps
+
+  // Indirizzo del sito, con la barra finale. Da cambiare se arriva un dominio proprio:
+  // va in canonical, Open Graph, dati strutturati e sitemap (poi: node strumenti/prerender.mjs).
+  url: "https://on-the-road-torino.vercel.app/",
+
+  // Testi per Google e per l'anteprima dei link. Togliere "Sito dimostrativo." al lancio (docs/LANCIO.md).
+  seo: {
+    titolo: "On the Road · Bar e caffetteria, Via Monginevro 5, Torino",
+    descrizione: "Bar e caffetteria in Via Monginevro 5 a Torino: colazione al banco, aperitivo, spritz e cocktail, feste di laurea in sala privata. Menu con prezzi e orari. Sito dimostrativo.",
+    descrizioneBreve: "Bar e caffetteria a Torino: colazione al banco, aperitivo, spritz e cocktail, feste di laurea in sala privata.",
+    immagine: { src: "img/anteprima.jpg", w: 1200, h: 630, alt: "Logo di On the Road con le foto di un cocktail e di un tagliere" },
+  },
 
   // Google Maps (link della scheda, usato per "Come arrivare"; mai iframe)
   mappa: "https://www.google.com/maps/place/On+the+Road/@45.0653699,7.6533656,20z/data=!4m6!3m5!1s0x47886d1e3e227cb3:0x8069fa16b4f0f83b!8m2!3d45.0652934!4d7.6535334!16s%2Fg%2F1td124dt",
@@ -54,12 +68,13 @@ const DATI = {
 
   // DA CONFERMARE (Maps)
   accessibilita: "Ingresso e bagno accessibili in sedia a rotelle (secondo Google Maps).",
+  accessibilitaSchema: ["Ingresso accessibile in sedia a rotelle", "Bagno accessibile in sedia a rotelle"],
 
   // Foto (originali in img-originali/, versioni ottimizzate in img/).
   // null = riquadro [FOTO DA INSERIRE] con la descrizione della foto che serve.
   foto: {
-    cocktail: { src: "img/cocktail.webp", alt: "Tre drink su un tavolino all'aperto, uno con fragole e menta", w: 565, h: 627 },
-    tagliere: { src: "img/tagliere.webp", alt: "Tagliere con fritti, salame, patatine, cous cous e salse, accanto a due calici di vino bianco", w: 531, h: 567 },
+    cocktail: { src: "img/cocktail.webp", alt: "Tre drink su un tavolino all'aperto, uno con fragole e menta", w: 565, h: 627, subito: true },
+    tagliere: { src: "img/tagliere.webp", alt: "Tagliere con fritti, salame, patatine, cous cous e salse, accanto a due calici di vino bianco", w: 531, h: 567, subito: true },
     buffet: { src: "img/buffet-aperitivo.webp", alt: "Un lungo banco di aperitivo con bruschette, pizzette, tramezzini, patate e bastoncini di carota", w: 673, h: 793 },
     sala: null,
   },
@@ -201,26 +216,26 @@ const DATI = {
   ],
 };
 
-/* ===================================================================== */
+/* =====================================================================
+   Da qui in poi non ci sono dati. Ogni blocco produce HTML da DATI.
+   strumenti/prerender.mjs scrive gli stessi blocchi dentro index.html,
+   così menu, orari e telefono si leggono anche senza JavaScript
+   (motori di ricerca e crawler delle IA). Se index.html non è aggiornato
+   rispetto a DATI, il browser rifà i blocchi e la pagina resta giusta.
+   ===================================================================== */
 
-(function () {
+const SITO = (function () {
   "use strict";
 
   const GIORNI = ["domenica", "lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato"];
-  const $ = (sel, dove = document) => dove.querySelector(sel);
-  const $$ = (sel, dove = document) => Array.from(dove.querySelectorAll(sel));
-  const el = (tag, cls, testo) => {
-    const n = document.createElement(tag);
-    if (cls) n.className = cls;
-    if (testo != null) n.textContent = testo;
-    return n;
-  };
-  const dc = (testo = "da confermare") => el("span", "dc", testo);
-  const link = (testo, href) => {
-    const a = el("a", null, testo);
-    a.href = href; a.target = "_blank"; a.rel = "noopener";
-    return a;
-  };
+  const DAY = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const SETTIMANA = [1, 2, 3, 4, 5, 6, 0];
+
+  const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const dc = (t = "da confermare") => `<span class="dc">${esc(t)}</span>`;
+  const fuori = (testo, href) => `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(testo)}</a>`;
+  const maiuscola = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+  const impronta = (t) => { let h = 0; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; return String(h); };
 
   // "HH:MM" -> minuti dalla mezzanotte
   const minuti = (s) => { const [h, m] = s.split(":").map(Number); return h * 60 + m; };
@@ -235,7 +250,163 @@ const DATI = {
     if (g.length > 1 && g.every((x, i) => i === 0 || x === g[i - 1] + 1)) return `dal ${GIORNI[g[0]]} al ${GIORNI[g[g.length - 1]]}`;
     return g.map((x) => GIORNI[x]).join(", ");
   };
-  const maiuscola = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+  // "lunedì-giovedì 06:30–00:00; venerdì e sabato 06:30–00:30; domenica 09:00–22:00"
+  function orariTesto() {
+    const gruppi = [];
+    SETTIMANA.forEach((g) => {
+      const o = DATI.orari[g] ? DATI.orari[g].join("–") : "chiuso";
+      const ultimo = gruppi[gruppi.length - 1];
+      if (ultimo && ultimo.o === o) ultimo.g.push(g); else gruppi.push({ o, g: [g] });
+    });
+    return gruppi.map(({ o, g }) => {
+      const nomi = g.length === 1 ? GIORNI[g[0]] : g.length === 2 ? `${GIORNI[g[0]]} e ${GIORNI[g[1]]}` : `${GIORNI[g[0]]}-${GIORNI[g[g.length - 1]]}`;
+      return `${nomi} ${o}`;
+    }).join("; ");
+  }
+
+  const caffetteria = () => DATI.menu.find((c) => c.id === "caffetteria");
+  const prezzoDi = (nome) => (caffetteria().gruppi[0].voci.find((v) => v[0] === nome) || [])[1];
+
+  function listino(g) {
+    const titolo = g.titolo ? `<h3 class="listino__gruppo">${esc(g.titolo)}</h3>` : "";
+    const nota = g.conAperitivo ? `<p class="listino__nota">Ogni voce anche con aperitivo: <strong>${esc(g.conAperitivo)} €</strong> ${dc()}</p>` : "";
+    const voci = g.voci.map(([nome, prezzo, d]) =>
+      `<li class="listino__voce"><span class="listino__nome">${esc(nome)}</span><span class="listino__prezzo">${esc(prezzo)}</span>${d ? `<span class="listino__desc">${esc(d)}</span>` : ""}</li>`).join("");
+    return `${titolo}${nota}<ul class="listino">${voci}</ul>`;
+  }
+
+  function schedeDrink() {
+    const cat = DATI.menu.filter((c) => c.id !== "caffetteria");
+    const bottoni = cat.map((c) => {
+      const n = c.gruppi.reduce((t, g) => t + g.voci.length, 0);
+      return `<button class="schede__bottone" type="button" id="scheda-${c.id}" role="tab" aria-controls="pannello-${c.id}" data-scheda="${c.id}">${esc(c.titolo)}<small>${n}</small></button>`;
+    }).join("");
+    const pannelli = cat.map((c) =>
+      `<div class="schede__pannello" id="pannello-${c.id}" role="tabpanel" aria-labelledby="scheda-${c.id}" tabindex="0"><h3 class="schede__titolo">${esc(c.titolo)}</h3>${c.gruppi.map(listino).join("")}</div>`).join("");
+    const fonte = `<p class="listino__fonte">Fonte: ${fuori("menu digitale del locale su leggimenu.it", DATI.menuDigitale)}. Questo sito non dà indicazioni sugli allergeni: chiedi al personale.</p>`;
+    return `<div class="schede__lista" role="tablist" aria-label="Categorie dei drink">${bottoni}</div>${pannelli}${fonte}`;
+  }
+
+  function foto(k) {
+    const f = DATI.foto[k];
+    if (!f) {
+      const d = esc(DATI.fotoServe[k] || "");
+      return `<div class="foto foto--manca" role="img" aria-label="Foto da inserire: ${d}"><span class="foto__etichetta">[FOTO DA INSERIRE]</span><span class="foto__desc">${d}</span></div>`;
+    }
+    const carica = f.subito ? `fetchpriority="high"` : `loading="lazy"`;
+    return `<div class="foto"><img src="${esc(f.src)}" alt="${esc(f.alt)}" width="${f.w}" height="${f.h}" decoding="async" ${carica}></div>`;
+  }
+
+  function domande() {
+    const tel = `<a href="tel:${esc(DATI.telefono.numero)}">${esc(DATI.telefono.testo)}</a>`;
+    const fasce = DATI.aperitivo.map((f) => `${f.fonte}: ${f.nome.toLowerCase()} ${f.ore.join("–")}, ${giorniTesto(f.giorni)}`).join(". ");
+    return [
+      [`Dove si trova ${DATI.nome}?`, `${esc(DATI.nome)} è in ${esc(DATI.indirizzo)}. ${fuori("Indicazioni su Google Maps", DATI.mappa)}. Telefono ${tel} ${dc()}`],
+      ["Che orari fa?", `${esc(maiuscola(orariTesto()))}. ${dc()}`],
+      ["Quanto costa l'aperitivo?", `Nel menu ogni spritz, cocktail, birra e bibita ha il prezzo «con aperitivo» di 8,00 €. Cosa comprende: ${dc()}`],
+      ["A che ora è l'aperitivo?", `Le fonti non coincidono. ${esc(fasce)}. ${dc()}`],
+      ["Quanto costa la colazione?", `Caffè ${esc(prezzoDi("Caffè"))} €, cappuccino ${esc(prezzoDi("Cappuccino"))} €, brioche ${esc(prezzoDi("Brioches alla Crema"))} €. ${dc()}`],
+      ["Si possono fare feste di laurea?", `Sì, secondo il menu digitale del locale: aperitivo di laurea con apericena a buffet o al tavolo, in sala privata. Per chiedere: telefono ${tel} o al bancone. ${dc()}`],
+    ].map(([d, r]) => `<details class="domanda"><summary>${esc(d)}</summary><p>${r}</p></details>`).join("");
+  }
+
+  // Tutto ciò che vive nella pagina: nome del blocco -> HTML
+  const BLOCCHI = {
+    "foto-cocktail": () => foto("cocktail"),
+    "foto-tagliere": () => foto("tagliere"),
+    "foto-buffet": () => foto("buffet"),
+    "foto-sala": () => foto("sala"),
+    "aperitivo-fasce": () => DATI.aperitivo.map((f) =>
+      `<li><span class="quando__ore">${f.ore.join("–")}</span><span class="quando__fonte">${esc(f.nome)}, ${giorniTesto(f.giorni)} · secondo ${esc(f.fonte)}</span></li>`).join(""),
+    "tagliere": () => `${esc(maiuscola(giorniTesto(DATI.tagliere.giorni)))} · ${DATI.tagliere.ore.join("–")}`,
+    "drink": schedeDrink,
+    "colazione-apertura": () => {
+      const feriali = [1, 2, 3, 4, 5, 6].map((g) => DATI.orari[g] && DATI.orari[g][0]);
+      if (!feriali.every((x) => x && x === feriali[0]) || !DATI.orari[0]) return "";
+      return `Dal lunedì al sabato si apre alle ${feriali[0]}, la domenica alle ${DATI.orari[0][0]}. ${dc()}`;
+    },
+    "colazione-prezzi": () => [["Caffè", "Caffè"], ["Cappuccino", "Cappuccino"], ["Brioches alla Crema", "Brioche"]].map(([nome, et]) =>
+      `<li><span class="banco__nome">${esc(et)}</span><span class="banco__prezzo">${esc(prezzoDi(nome))}<small>€</small></span></li>`).join(""),
+    "caffetteria": () => caffetteria().gruppi.map(listino).join(""),
+    "sala": () => DATI.sala.map((t) => `<li>${esc(t)}</li>`).join(""),
+    "dieci-persone": () => `«${esc(DATI.dieciPersone)}»`,
+    "orari": () => SETTIMANA.map((g) => {
+      const o = DATI.orari[g];
+      return `<tr data-giorno="${g}"><th scope="row">${GIORNI[g]}</th><td>${o ? `${o[0]} – ${o[1]}` : "chiuso"}</td></tr>`;
+    }).join(""),
+    "info": () => [
+      `Telefono <a href="tel:${esc(DATI.telefono.numero)}">${esc(DATI.telefono.testo)}</a> ${dc()}`,
+      `${esc(DATI.accessibilita)} ${dc()}`,
+      `Menu digitale del locale: ${fuori("leggimenu.it", DATI.menuDigitale)}`,
+    ].map((t) => `<li>${t}</li>`).join(""),
+    "domande": domande,
+  };
+  const tuttiIBlocchi = () => Object.keys(BLOCCHI).map((k) => BLOCCHI[k]()).join("");
+
+  // Dati strutturati schema.org. Solo dati presenti in DATI: niente stelle,
+  // niente fascia di prezzo inventata, niente orario dell'aperitivo (fonti in conflitto).
+  function schema() {
+    const assoluto = (p) => DATI.url + p;
+    const prezzo = (p) => p.replace(",", ".");
+    const a = DATI.indirizzoDettaglio;
+    const fasce = SETTIMANA.filter((g) => DATI.orari[g]).map((g) => ({
+      "@type": "OpeningHoursSpecification", dayOfWeek: DAY[g], opens: DATI.orari[g][0], closes: DATI.orari[g][1],
+    }));
+    const sezioni = DATI.menu.flatMap((c) => c.gruppi.map((g) => ({
+      "@type": "MenuSection",
+      name: g.titolo || c.titolo,
+      hasMenuItem: g.voci.map(([name, p, description]) => ({
+        "@type": "MenuItem", name, ...(description ? { description } : {}),
+        offers: { "@type": "Offer", price: prezzo(p), priceCurrency: "EUR" },
+      })),
+    })));
+    return {
+      "@context": "https://schema.org",
+      "@type": "BarOrPub",
+      "@id": `${DATI.url}#locale`,
+      name: DATI.nome,
+      description: DATI.seo.descrizioneBreve,
+      url: DATI.url,
+      telephone: DATI.telefono.numero,
+      image: Object.values(DATI.foto).filter(Boolean).map((f) => assoluto(f.src)),
+      logo: DATI.logo ? assoluto(DATI.logo.src) : undefined,
+      address: { "@type": "PostalAddress", streetAddress: a.via, postalCode: a.cap, addressLocality: a.citta, addressRegion: a.provincia, addressCountry: a.paese },
+      geo: { "@type": "GeoCoordinates", latitude: DATI.coordinate.lat, longitude: DATI.coordinate.lng },
+      hasMap: DATI.mappa,
+      openingHoursSpecification: fasce,
+      amenityFeature: DATI.accessibilitaSchema.map((name) => ({ "@type": "LocationFeatureSpecification", name, value: true })),
+      hasMenu: { "@type": "Menu", name: `Menu di ${DATI.nome}`, url: `${DATI.url}#drink`, hasMenuSection: sezioni },
+    };
+  }
+
+  // Contenuto di <head> scritto da strumenti/prerender.mjs
+  function testa() {
+    const s = DATI.seo;
+    const img = DATI.url + s.immagine.src;
+    const dati = JSON.stringify(schema()).replace(/</g, "\\u003c");
+    return [
+      `<title>${esc(s.titolo)}</title>`,
+      `<meta name="description" content="${esc(s.descrizione)}">`,
+      `<link rel="canonical" href="${esc(DATI.url)}">`,
+      `<meta property="og:type" content="website">`,
+      `<meta property="og:locale" content="it_IT">`,
+      `<meta property="og:site_name" content="${esc(DATI.nome)}">`,
+      `<meta property="og:title" content="${esc(s.titolo)}">`,
+      `<meta property="og:description" content="${esc(s.descrizione)}">`,
+      `<meta property="og:url" content="${esc(DATI.url)}">`,
+      `<meta property="og:image" content="${esc(img)}">`,
+      `<meta property="og:image:width" content="${s.immagine.w}">`,
+      `<meta property="og:image:height" content="${s.immagine.h}">`,
+      `<meta property="og:image:alt" content="${esc(s.immagine.alt)}">`,
+      `<meta name="twitter:card" content="summary_large_image">`,
+      `<script type="application/ld+json">${dati}</script>`,
+    ].join("\n  ");
+  }
+
+  /* ---------- Solo nel browser ---------- */
+
+  const $ = (sel, dove = document) => dove.querySelector(sel);
+  const $$ = (sel, dove = document) => Array.from(dove.querySelectorAll(sel));
 
   // Ora di Torino, qualunque sia il fuso di chi guarda
   function adessoATorino() {
@@ -247,7 +418,6 @@ const DATI = {
     return { giorno, min: Number(p.hour) * 60 + Number(p.minute) };
   }
 
-  // Campi di testo semplici, link e logo
   function riempiCampi() {
     $$('[data-campo="nome"]').forEach((n) => { n.textContent = DATI.nome; });
     $$('[data-campo="indirizzo"]').forEach((n) => { n.textContent = DATI.indirizzo; });
@@ -262,10 +432,7 @@ const DATI = {
       a.setAttribute("aria-label", `${a.textContent.trim()}: apre Google Maps`);
     });
     $$("[data-logo]").forEach((img) => {
-      if (DATI.logo) { img.src = DATI.logo.src; return; }
-      // Senza logo: nel titolo resta il nome in testo, altrove l'immagine sparisce
-      if (img.closest("h1")) img.replaceWith(document.createTextNode(DATI.nome));
-      else img.remove();
+      if (DATI.logo) img.src = DATI.logo.src; else img.remove();
     });
   }
 
@@ -302,98 +469,15 @@ const DATI = {
     $('[data-campo="stato"]').classList.toggle("stato--aperto", s.aperto);
   }
 
-  function aperitivo() {
-    const ul = $('[data-campo="aperitivo-fasce"]');
-    DATI.aperitivo.forEach((f) => {
-      const li = el("li");
-      li.append(el("span", "quando__ore", `${f.ore[0]}–${f.ore[1]}`));
-      li.append(el("span", "quando__fonte", `${f.nome}, ${giorniTesto(f.giorni)} · secondo ${f.fonte}`));
-      ul.append(li);
-    });
-    const t = DATI.tagliere;
-    $('[data-campo="tagliere"]').textContent = `${maiuscola(giorniTesto(t.giorni))} · ${t.ore[0]}–${t.ore[1]}`;
+  function segnaOggi() {
+    const riga = $(`tr[data-giorno="${adessoATorino().giorno}"]`);
+    if (riga) { riga.classList.add("oggi"); riga.setAttribute("aria-current", "date"); }
   }
 
-  // Un listino (lista di voci) per un gruppo del menu
-  function listino(g) {
-    const frammento = document.createDocumentFragment();
-    if (g.titolo) frammento.append(el("h3", "listino__gruppo", g.titolo));
-    if (g.conAperitivo) {
-      const n = el("p", "listino__nota");
-      n.append("Ogni voce anche con aperitivo:", el("strong", null, `${g.conAperitivo} €`), dc());
-      frammento.append(n);
-    }
-    const ul = el("ul", "listino");
-    g.voci.forEach(([nome, prezzo, nota]) => {
-      const li = el("li", "listino__voce");
-      li.append(el("span", "listino__nome", nome), el("span", "listino__prezzo", prezzo));
-      if (nota) li.append(el("span", "listino__desc", nota));
-      ul.append(li);
-    });
-    frammento.append(ul);
-    return frammento;
-  }
-
-  function colazione() {
-    const caff = DATI.menu.find((c) => c.id === "caffetteria");
-    const voce = (nome) => caff.gruppi[0].voci.find((v) => v[0] === nome);
-    const ul = $('[data-campo="colazione-prezzi"]');
-    [["Caffè", "Caffè"], ["Cappuccino", "Cappuccino"], ["Brioches alla Crema", "Brioche"]].forEach(([nome, et]) => {
-      const v = voce(nome);
-      if (!v) return;
-      const li = el("li");
-      const prezzo = el("span", "banco__prezzo", v[1]);
-      prezzo.append(el("small", null, "€"));
-      li.append(el("span", "banco__nome", et), prezzo);
-      ul.append(li);
-    });
-    // Apertura del mattino dai dati orari
-    const feriali = [1, 2, 3, 4, 5, 6].map((g) => DATI.orari[g] && DATI.orari[g][0]);
-    const p = $('[data-campo="colazione-apertura"]');
-    if (feriali.every((x) => x && x === feriali[0]) && DATI.orari[0]) {
-      p.textContent = `Dal lunedì al sabato si apre alle ${feriali[0]}, la domenica alle ${DATI.orari[0][0]}. `;
-      p.append(dc());
-    }
-    const box = $('[data-campo="caffetteria"]');
-    caff.gruppi.forEach((g) => box.append(listino(g)));
-  }
-
-  // Drink a schede (senza JS il menu rimanda al menu digitale)
-  function drink() {
-    const categorie = DATI.menu.filter((c) => c.id !== "caffetteria");
-    const box = $('[data-campo="drink"]');
-    box.textContent = "";
-    const lista = el("div", "schede__lista");
-    lista.setAttribute("role", "tablist");
-    lista.setAttribute("aria-label", "Categorie dei drink");
-    box.append(lista);
-
-    const bottoni = [];
-    categorie.forEach((cat) => {
-      const b = el("button", "schede__bottone", cat.titolo);
-      const quante = cat.gruppi.reduce((n, g) => n + g.voci.length, 0);
-      b.append(el("small", null, String(quante)));
-      b.type = "button";
-      b.id = `scheda-${cat.id}`;
-      b.setAttribute("role", "tab");
-      b.setAttribute("aria-controls", `pannello-${cat.id}`);
-      b.dataset.scheda = cat.id;
-      lista.append(b);
-      bottoni.push(b);
-
-      const pan = el("div", "schede__pannello");
-      pan.id = `pannello-${cat.id}`;
-      pan.setAttribute("role", "tabpanel");
-      pan.setAttribute("aria-labelledby", b.id);
-      pan.tabIndex = 0;
-      cat.gruppi.forEach((g) => pan.append(listino(g)));
-      box.append(pan);
-    });
-
-    const fonte = el("p", "listino__fonte");
-    fonte.append("Fonte: ", link("menu digitale del locale su leggimenu.it", DATI.menuDigitale), ". Questo sito non dà indicazioni sugli allergeni: chiedi al personale.");
-    box.append(fonte);
-
+  // Schede dei drink: senza JavaScript si vedono tutte le categorie, una sotto l'altra
+  function schede() {
+    const lista = $(".schede__lista");
+    const bottoni = $$("[role=tab]", lista);
     function apri(id, fuoco) {
       bottoni.forEach((b) => {
         const si = b.dataset.scheda === id;
@@ -417,67 +501,25 @@ const DATI = {
       if (e.key === "End") j = bottoni.length - 1;
       if (j !== null) { e.preventDefault(); apri(bottoni[j].dataset.scheda, true); }
     });
-    apri(categorie[0].id);
+    apri(bottoni[0].dataset.scheda);
   }
 
-  function lauree() {
-    const ul = $('[data-campo="sala"]');
-    DATI.sala.forEach((t) => ul.append(el("li", null, t)));
-    $('[data-campo="dieci-persone"]').textContent = `«${DATI.dieciPersone}»`;
+  function avvia() {
+    const radice = document.documentElement;
+    radice.classList.add("js");
+    if (radice.dataset.impronta !== impronta(tuttiIBlocchi())) {
+      $$("[data-blocco]").forEach((b) => { b.innerHTML = BLOCCHI[b.dataset.blocco](); });
+    }
+    riempiCampi();
+    aggiornaStato();
+    segnaOggi();
+    schede();
+    // Aggiorna "aperto adesso" ogni minuto
+    setInterval(aggiornaStato, 60 * 1000);
   }
 
-  function dove() {
-    const tb = $('[data-campo="orari"]');
-    const { giorno } = adessoATorino();
-    [1, 2, 3, 4, 5, 6, 0].forEach((g) => {
-      const tr = el("tr");
-      if (g === giorno) { tr.className = "oggi"; tr.setAttribute("aria-current", "date"); }
-      const th = el("th", null, GIORNI[g]);
-      th.scope = "row";
-      const o = DATI.orari[g];
-      tr.append(th, el("td", null, o ? `${o[0]} – ${o[1]}` : "chiuso"));
-      tb.append(tr);
-    });
-
-    const info = $('[data-campo="info"]');
-    const tel = el("li");
-    tel.append(`Telefono ${DATI.telefono.testo} `, dc());
-    const acc = el("li");
-    acc.append(`${DATI.accessibilita} `, dc());
-    const menu = el("li");
-    menu.append("Menu digitale del locale: ", link("leggimenu.it", DATI.menuDigitale));
-    info.append(tel, acc, menu);
-  }
-
-  function foto() {
-    $$("[data-foto]").forEach((box) => {
-      const k = box.dataset.foto;
-      const f = DATI.foto[k];
-      box.textContent = "";
-      if (f) {
-        box.classList.add("foto");
-        const img = el("img");
-        img.src = f.src; img.alt = f.alt; img.decoding = "async";
-        if (f.w) { img.width = f.w; img.height = f.h; }
-        if (!box.closest(".hero")) img.loading = "lazy";
-        box.append(img);
-      } else {
-        box.classList.add("foto", "foto--manca");
-        box.setAttribute("role", "img");
-        box.setAttribute("aria-label", `Foto da inserire: ${DATI.fotoServe[k] || ""}`);
-        box.append(el("span", "foto__etichetta", "[FOTO DA INSERIRE]"), el("span", "foto__desc", DATI.fotoServe[k] || ""));
-      }
-    });
-  }
-
-  riempiCampi();
-  foto();
-  aggiornaStato();
-  aperitivo();
-  drink();
-  colazione();
-  lauree();
-  dove();
-  // Aggiorna "aperto adesso" ogni minuto
-  setInterval(aggiornaStato, 60 * 1000);
+  return { BLOCCHI, tuttiIBlocchi, testa, impronta, avvia };
 })();
+
+if (typeof document !== "undefined") SITO.avvia();
+else if (typeof module !== "undefined") module.exports = { DATI, SITO };

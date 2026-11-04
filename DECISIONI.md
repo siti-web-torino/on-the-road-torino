@@ -75,3 +75,14 @@ Alessandro: la striscia della giornata non funziona e il sito sembra anonimo. Ha
 - **Ordine:** prima schermata (logo, cosa offre, stato, Come arrivare, Chiama, collage cocktail + tagliere) → Aperitivo (prezzo 8 € in grande, orari in conflitto, tagliere + drink, foto del buffet) → Drink a schede (Spritz, Cocktails, Bevande / Birre con il numero di voci) → Colazione (prezzi grandi al banco, caffetteria intera in una tendina) → Feste di laurea (due "biglietti" separati) → Orari e indirizzo. L'aperitivo va per primo perché è l'argomento più citato nelle recensioni (21, `DATI-CLIENTE.md`) e le foto sono tutte serali.
 - **Dettaglio memorabile:** l'"8 €" dell'aperitivo in rosa con un alone da insegna.
 - **Rischio:** il nero con il rosa può far sembrare il bar più notturno di quanto sia. Va fatto vedere a chi lo frequenta la mattina.
+
+## D7. SEO e GEO: preparati, ma il sito resta chiuso (04/11/2026)
+Alessandro ha chiesto di ottimizzare per motori e IA, non di aprire il sito. `noindex` e `robots.txt` restano: CLAUDE.md li toglie solo su richiesta esplicita, e il locale non ha confermato nulla. I dati strutturati non possono dire "da confermare": aprire ora presenterebbe a Google orari e prezzi non verificati come veri. I passi di apertura sono in `docs/LANCIO.md`.
+- **Dati nell'HTML:** menu, orari e telefono prima esistevano solo dopo il JavaScript, e molti crawler delle IA non lo eseguono. CLAUDE.md vuole però tutti i dati in `DATI`. Soluzione: i blocchi si generano da `DATI` con le stesse funzioni nel browser e in `strumenti/prerender.mjs`, che li scrive in `index.html`. Un'impronta dice al browser se l'HTML è aggiornato; se non lo è, rifà i blocchi. Non è una build: il sito si pubblica com'è.
+- **Dati strutturati `BarOrPub`:** indirizzo, coordinate, telefono, orari, accessibilità, menu con 90 voci e prezzi. Esclusi di proposito: stelle e recensioni, fascia di prezzo (non è nei dati), orario dell'aperitivo (fonti in conflitto), contenuto del tagliere.
+- **Domande frequenti visibili** (sei, generate da `DATI`): risposte brevi e autosufficienti, il formato più facile da citare per un'IA. Niente schema `FAQPage`: Google non lo mostra più per i siti comuni, e il testo visibile basta.
+- **`h1` in testo** al posto dell'immagine del logo; il logo resta identico e sopra il titolo.
+- **Anteprima dei link** (`img/anteprima.jpg`, 1200×630): logo e foto date da Alessandro, senza ingrandire il logo.
+- **`.vercelignore`:** il deploy pubblicava anche `RAPPORTO.md`, `CLAUDE.md`, `docs/` e gli originali. Ora restano nella repo ma non sul sito.
+- **Niente `llms.txt`:** nessun motore importante dichiara di usarlo, e sarebbe una seconda copia dei dati.
+- **Quartiere non nominato:** non è nel materiale (`DATI-CLIENTE.md`). Sarebbe una parola utile per la ricerca locale: da chiedere al locale.

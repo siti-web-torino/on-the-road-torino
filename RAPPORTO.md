@@ -14,6 +14,10 @@
 3. **Telefono**: una directory riporta per via Monginevro 5 un numero diverso (011 3825192) e una ragione sociale senza il nome "On the Road". Può essere un dato vecchio. Nel sito c'è solo il numero di Maps.
 4. **Online, su tuo ok del 03/11/2026.** Repo pubblica https://github.com/siti-web-torino/on-the-road-torino (dal template), sito https://on-the-road-torino.vercel.app/ (si apre senza login, `noindex`). Il link è pubblico: chi lo riceve vede una demo con l'avviso "sito dimostrativo non ufficiale" e i riquadri [DA CONFERMARE]. Prima di mandarlo al locale, rileggi i punti 1-3.
 
+## SEO e GEO: cosa puoi dire al locale
+Vero oggi: "il sito è predisposto per Google e per le risposte delle IA: menu, orari e contatti sono leggibili dai motori, ci sono i dati strutturati del locale e l'anteprima per i link". Si attiva con la loro conferma dei dati (`docs/LANCIO.md`).
+Da non dire: che è già su Google, che uscirà primo, che ChatGPT lo citerà. Il sito è chiuso ai motori e nessuno può garantire un posizionamento. Per un bar di quartiere conta di più la scheda Google Maps, che è del locale. Il dominio `vercel.app` è provvisorio.
+
 ## Cosa non si sa
 Orario vero dell'aperitivo, cosa include l'aperitivo da 8 €, contenuto e prezzo del tagliere, se le due offerte di laurea da 100 € sono la stessa, capienza e aspetto della sala, storia, titolari, social, WhatsApp, modo di prenotare, tavolini esterni, allergeni, pagamenti. Elenco completo dei punti da far confermare nel README.
 

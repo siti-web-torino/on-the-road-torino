@@ -5,7 +5,7 @@ One-page per On the Road, bar e caffetteria in Via Monginevro 5, Torino. **Demo 
 ## Dove sta
 - Repository: https://github.com/siti-web-torino/on-the-road-torino (pubblica, creata da `template-vetrina`)
 - Sito: https://on-the-road-torino.vercel.app/ (progetto Vercel `on-the-road-torino`, team Coste). Ogni push su `main` fa un nuovo deploy di produzione.
-- Il link si apre senza login, ma il sito resta fuori dai motori di ricerca (`noindex` e `robots.txt`).
+- Il link si apre senza login, ma il sito resta fuori dai motori di ricerca (`noindex` e `robots.txt`) finché il locale non conferma i dati: vedi `docs/LANCIO.md`.
 
 HTML, CSS e JavaScript puri, nessuna build. Per vederlo in locale:
 
@@ -19,14 +19,23 @@ poi http://localhost:8765/.
 - `index.html`: la pagina
 - `css/style.css`: stile; colori, scala tipografica e spaziature come variabili in `:root`
 - `js/main.js`: **tutti i dati** nell'oggetto `DATI` in cima, poi il codice che li mette nella pagina
+- `strumenti/prerender.mjs`: scrive i dati in `index.html`; `strumenti/anteprime.mjs`: screenshot
+- `.vercelignore`: tiene fuori dal sito note, `docs/` e originali
 - `fonts/`: Bricolage Grotesque e IBM Plex Mono (licenza OFL, file `OFL-*.txt`)
 - `img/`: vuota, qui vanno le foto ottimizzate
 - `docs/fonti/`: i dati di partenza (DATI-CLIENTE.md, MENU.md)
 - `docs/anteprime/`, `docs/VERIFICA.md`: screenshot e verifica
+- `docs/LANCIO.md`: come aprire il sito a Google e alle IA
 - `STUDIO.md`, `DECISIONI.md`, `RAPPORTO.md`: studio, scelte, stato
 
 ## Come si cambiano i contenuti
-Tutto in `js/main.js`, oggetto `DATI`.
+Tutto in `js/main.js`, oggetto `DATI`. Dopo ogni modifica lancia:
+
+```bash
+node strumenti/prerender.mjs
+```
+
+Copia i dati dentro `index.html` e `sitemap.xml`: è la versione che leggono Google e i crawler delle IA. Il sito si pubblica così com'è, non c'è una build. Se ti dimentichi, chi apre il sito vede comunque i dati nuovi (li rifà il browser), ma i crawler restano ai vecchi.
 
 - **Orari**: `orari`, chiave 0 = domenica … 6 = sabato, `null` = chiuso. Una chiusura prima dell'apertura (es. `"00:30"`) vale come "dopo mezzanotte". "Aperto adesso" si aggiorna da solo.
 - **Aperitivo**: `aperitivo` ha due voci (Maps e leggimenu) perché le fonti non coincidono. Quando il locale dice l'orario giusto, lascia una sola voce e cambia `fonte` in "il locale"; poi togli in `index.html` la frase "Le due fonti pubbliche non coincidono".

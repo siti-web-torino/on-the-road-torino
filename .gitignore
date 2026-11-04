@@ -3,4 +3,6 @@
 img-da-verificare/
 
 # Strumenti locali (non fanno parte del sito)
-strumenti/
+strumenti/*
+!strumenti/prerender.mjs
+!strumenti/anteprime.mjs

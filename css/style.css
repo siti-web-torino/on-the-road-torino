@@ -197,9 +197,9 @@ a { color: inherit; text-underline-offset: 0.2em; }
     var(--nero);
 }
 .hero__griglia { display: grid; gap: var(--s-7); }
-.hero__titolo { margin: 0 0 var(--s-3); }
 .hero__logo {
   width: clamp(140px, 40vw, 220px); height: auto;
+  margin-bottom: var(--s-3);
   /* il logo è un'insegna tonda su fondo scuro: si mostra solo il tondo, senza ritoccarlo */
   border-radius: 50%;
   box-shadow: 0 0 50px -6px rgba(243, 120, 196, 0.45), 0 0 120px -20px rgba(170, 225, 238, 0.25);
@@ -208,6 +208,7 @@ a { color: inherit; text-underline-offset: 0.2em; }
   display: flex; flex-wrap: wrap; gap: 0 var(--s-3);
   font-family: var(--mono); font-size: var(--t-xs); text-transform: uppercase; letter-spacing: 0.1em;
   color: var(--ciano); margin-bottom: var(--s-3);
+  font-weight: 400; line-height: 1.55;
 }
 .hero__dove span:first-child::after { content: "·"; margin-left: var(--s-3); }
 .hero__frase {
@@ -291,7 +292,8 @@ a { color: inherit; text-underline-offset: 0.2em; }
 
 /* ---------- Drink: schede e listino ---------- */
 .sezione--drink { background: var(--nero); }
-.schede__lista {
+.schede__lista { display: none; } /* senza JavaScript le categorie sono una sotto l'altra */
+.js .schede__lista {
   display: flex; gap: var(--s-2); overflow-x: auto; scrollbar-width: none;
   margin: 0 -1rem var(--s-6); padding: 0 1rem 2px;
 }
@@ -308,6 +310,8 @@ a { color: inherit; text-underline-offset: 0.2em; }
 .schede__bottone[aria-selected="true"] { background: var(--ciano); border-color: var(--ciano); color: var(--nero); }
 .schede__bottone[aria-selected="true"] small { color: #1d3f47; }
 .schede__pannello:focus-visible { outline-offset: 8px; }
+.schede__titolo { font-size: var(--t-l); color: var(--ciano); margin-top: var(--s-6); }
+.js .schede__titolo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; margin: 0; }
 
 .listino__nota {
   display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2);
@@ -417,6 +421,21 @@ a { color: inherit; text-underline-offset: 0.2em; }
   padding: 0.25em 0.55em; border-radius: 999px; background: var(--rosa); color: var(--nero); vertical-align: 0.15em;
 }
 
+/* ---------- Domande frequenti ---------- */
+.sezione--domande { background: var(--prugna); border-top: 1px solid var(--linea); }
+.domande { display: grid; gap: var(--s-5); }
+.domande h2 { margin-bottom: 0; }
+.domanda { border-bottom: 1px solid var(--linea); }
+.domanda summary {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-4);
+  min-height: 52px; padding: var(--s-2) 0; cursor: pointer; list-style: none; font-weight: 700;
+}
+.domanda summary::-webkit-details-marker { display: none; }
+.domanda summary::after { content: "+"; flex: none; font: 600 1.4rem/1 var(--mono); color: var(--rosa); transition: transform 0.2s; }
+.domanda[open] summary::after { transform: rotate(45deg); }
+.domanda p { color: var(--testo-2); margin-bottom: var(--s-4); }
+.domanda a { color: var(--ciano); }
+
 /* ---------- Piede ---------- */
 .piede { background: #000; color: var(--testo-2); padding: var(--s-7) 0; font-size: var(--t-s); border-top: 1px solid var(--linea); }
 .piede__dentro { display: flex; gap: var(--s-5); align-items: flex-start; }
@@ -458,6 +477,7 @@ a { color: inherit; text-underline-offset: 0.2em; }
   .lauree { grid-template-columns: 1fr 1fr; }
   .lauree__foto { grid-column: 1 / -1; }
   .dove { grid-template-columns: 1fr minmax(0, 26rem); }
+  .domande { grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: var(--s-7); }
 }
 
 /* ---------- Desktop ---------- */

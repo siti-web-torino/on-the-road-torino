@@ -1,0 +1,7 @@
+# Note di lavoro e originali: restano nella repo, non vanno online col sito
+*.md
+docs
+strumenti
+img-originali
+img-da-verificare
+.claude
